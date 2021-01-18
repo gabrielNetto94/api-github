@@ -5,8 +5,6 @@ const fs = require('fs');
 
 const app = express();
 
-const teste = require('./teste');
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
