@@ -1,7 +1,3 @@
 node_modules
 users
-teste1.png
-teste2.png
-teste3.png
-teste4.png
-teste5.png
+*.png
