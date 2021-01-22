@@ -5,30 +5,46 @@ const puppeteer = require('puppeteer');
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
-  await page.goto('http://localhost', {
+  await page.goto('https://www.youtube.com/feed/trending', {
     "waitUntil": "networkidle0"
   });
 
-  try {
+  await page.waitForSelector('#video-title > yt-formatted-string', {
+    timeout: 3000
+  })
 
-    await page.waitForSelector('#informacao_conteudo > div.cartao-conteudo > ul > li:nth-child(1) > div > div.lista-titulo.pequeno', {
-      timeout: 3000
-    })
-
-    const curso = await page.evaluate(
-      () => document.querySelector('#informacao_conteudo > div.cartao-conteudo > ul > li:nth-child(1) > div > div.lista-titulo.pequeno').innerText.trim()
-    )
-    console.log(curso)
-
-  } catch (error) {
-    console.log("The element didn't appear.")
-  }
-
-  /*await page.waitForSelector('#informacao_conteudo > div.cartao-conteudo > ul > li:nth-child(1) > div > div.lista-titulo.pequeno');
-  const curso = await page.evaluate(
-    () => document.querySelector('#informacao_conteudo > div.cartao-conteudo > ul > li:nth-child(1) > div > div.lista-titulo.pequeno').innerText.trim()
+  const yt = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('#video-title > yt-formatted-string')).map((videoTitle) => videoTitle.innerText.trim())
   )
-  console.log(curso)*/
+
+  console.table(yt)
 
   await browser.close();
 })();
+
+
+
+(async () => {
+
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  
+  await page.goto('https://br.investing.com/crypto/bitcoin/btc-brl', {
+    "waitUntil": "networkidle0"
+  });
+
+
+  await page.waitForSelector('#last_last', {
+    timeout: 3000
+  })
+
+
+  const bitcoin = await page.evaluate(() =>
+    document.querySelector('#last_last').innerText.trim()
+  )
+  console.log('Cotação do bitcoin - ' + bitcoin)
+
+  await browser.close();
+})();
+
+
