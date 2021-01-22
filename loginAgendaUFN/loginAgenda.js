@@ -63,8 +63,13 @@ module.exports = {
 
         //PEGA O NOME DO ESTUDANDTE NO AGENDA
         await page.waitForSelector('#menu_superior_usuario > div > div > span.usuario-titulo');
-        const nomeEstudante = await page.$eval('#menu_superior_usuario > div > div > span.usuario-titulo', elm => elm.textContent)
-        console.log('Buscando notas de ' + nomeEstudante.trim());
+
+        //OUTRA MANEIRA DE PEGAR APENAS 1 ELEMENTO
+        const nomeEstudante = await page.evaluate(
+            () => document.querySelector('#menu_superior_usuario > div > div > span.usuario-titulo').textContent.trim()
+        )
+        //const nomeEstudante = await page.$eval('#menu_superior_usuario > div > div > span.usuario-titulo', elm => elm.textContent.trim())
+        console.log('Buscando notas de ' + nomeEstudante);
 
         //ESPERA A TABELA DE NOTAS E A PRIMEIRA DISCIPLINA SER GERADA
         await page.waitForSelector('#caderno_conteudo > div.cartao-conteudo > div > div.tabela-conteudo');
@@ -76,16 +81,27 @@ module.exports = {
         const disciplinas = await page.$$eval('.tabela-conteudo .tabela-linha .col.col-12.cor-matriculado:nth-child(1)', disciplinas => {
             return disciplinas.map(disciplina => disciplina.textContent.trim())
         })
-        const nota1 = await page.$$eval('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(4)', notas => {
-            return notas.map(nota => nota.textContent.trim())
-        })
-        const nota2 = await page.$$eval('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(5)', notas => {
-            return notas.map(nota => nota.textContent.trim())
-        })
 
-        const nota3 = await page.$$eval('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(6)', notas => {
+        const nota1 = await page.evaluate(
+            () => Array.from(document.querySelectorAll('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(4)'))
+                .map((nota) => nota.innerText.trim())
+        )
+
+        const nota2 = await page.evaluate(
+            () => Array.from(document.querySelectorAll('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(5)'))
+                .map((nota) => nota.innerText.trim())
+        )
+
+        const nota3 = await page.evaluate(
+            () => Array.from(document.querySelectorAll('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(6)'))
+                .map((nota) => nota.innerText.trim())
+        )
+
+        //OUTRO EXEMPLO DE COMO BUSCAR AS NOTAS PELO MÉTODO $$eval
+        /*const nota1 = await page.$$eval('.tabela-conteudo .tabela-linha .col.col-2.a-center:nth-child(4)', notas => {
             return notas.map(nota => nota.textContent.trim())
         })
+        */
 
         //MOSTRA VALORES
         for (var i = 0; i < disciplinas.length; i++) {
@@ -95,9 +111,11 @@ module.exports = {
         await browser.close();
 
         res.json({
-                nomeEstudante: nomeEstudante.trim(),
-                disciplinas
-
+            nomeEstudante: nomeEstudante.trim(),
+            disciplinas,
+            nota_1_bi: nota1,
+            nota_2_bi: nota2,
+            nota_3_bi: nota3,
         })
     }
 }
