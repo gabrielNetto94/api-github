@@ -45,18 +45,26 @@ module.exports = {
         await page.click('button[type=submit]');
         //await page.screenshot({ path: 'teste3.png' });
 
-        //SELECIONAR GRADUAÇÃO OU TEC ADM
-        await page.waitForSelector('input[type=radio]');
-        const matriculas = await page.$$eval('input[type=radio]', matriculas => {
-            return matriculas.map(matricula => matricula.value.trim())
-        })
-        //SELECIONA O ÚLTIMO ITEM DO RADIO BUTTON
-        const matriculaAluno = matriculas[matriculas.length - 1];
+        try {
+            //SELECIONAR GRADUAÇÃO OU TEC ADM
+            await page.waitForSelector('input[type=radio]', {
+                timeout: 2000
+            });
+            const matriculas = await page.$$eval('input[type=radio]', matriculas => {
+                return matriculas.map(matricula => matricula.value.trim())
+            })
+            //SELECIONA O ÚLTIMO ITEM DO RADIO BUTTON
+            const matriculaAluno = matriculas[matriculas.length - 1];
 
-        await page.waitForSelector('input[type=radio][value="' + matriculaAluno + '"]')
-        await page.click('input[type=radio][value="' + matriculaAluno + '"]');
-        await page.click('button[type=submit]');
-        //await page.screenshot({ path: 'teste4.png' });
+            await page.waitForSelector('input[type=radio][value="' + matriculaAluno + '"]')
+            await page.click('input[type=radio][value="' + matriculaAluno + '"]');
+            await page.click('button[type=submit]');
+            //await page.screenshot({ path: 'teste4.png' });
+
+            console.log('Precisa selecionar vinculo institucional')
+        } catch (e) {
+            console.log('Usuário não precisa selecionar vinculo institucional')
+        }
 
         //await page.screenshot({ path: 'teste5.png' });
         console.log('Login Realizado');
