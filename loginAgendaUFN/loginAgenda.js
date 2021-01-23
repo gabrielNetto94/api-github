@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 module.exports = {
 
     async login(req, res) {
+        
         const { cpf, password } = req.body;
 
         const browser = await puppeteer.launch();
@@ -46,7 +47,7 @@ module.exports = {
         //await page.screenshot({ path: 'teste3.png' });
 
         var matriculaAluno;
-        
+
         try {
             //SELECIONAR GRADUAÇÃO OU TEC ADM
             await page.waitForSelector('input[type=radio]', {
