@@ -23,7 +23,6 @@ function getBrowser() {
 async function closeBrowser() {
     const browser = getBrowser();
     await browser.close();
-    console.log('navegador finalizado!')
 }
 
 async function startBroser() {
@@ -33,7 +32,6 @@ async function startBroser() {
     await page.setViewport({ width: 1280, height: 800 })
     setPage(page);
     setBrowser(browser);
-    console.log('navegador Iniciado')
 }
 startBroser();
 
@@ -153,7 +151,6 @@ module.exports = {
         for (var i = 0; i < disciplinas.length; i++) {
             console.log(disciplinas[i] + ' -- Nota1: ' + nota1[i] + ' Nota2: ' + nota2[i] + ' Nota3: ' + nota3[i])
         }
-
         //JUNTA A NOTA DE CADA BIMISTRE COM CADA DISCIPLINA
         const scoreTable = {};
         for (i in disciplinas) {
