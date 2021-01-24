@@ -1,14 +1,49 @@
 const puppeteer = require('puppeteer');
 
+var page;
+var browser;
+
+function setPage(page) {
+    this.page = page;
+}
+
+function getPage() {
+
+    return this.page;
+}
+
+function setBrowser(browser) {
+    this.browser = browser;
+}
+
+function getBrowser() {
+    return this.browser;
+}
+
+async function closeBrowser() {
+    const browser = getBrowser();
+    await browser.close();
+    console.log('navegador finalizado!')
+}
+
+async function startBroser() {
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 })
+    setPage(page);
+    setBrowser(browser);
+    console.log('navegador Iniciado')
+}
+startBroser();
+
 module.exports = {
 
     async login(req, res) {
-        
-        const { cpf, password } = req.body;
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.setViewport({ width: 1280, height: 800 })
+        var page = getPage();
+
+        const { cpf, password } = req.body;
 
         var url = 'https://www.ufn.edu.br/agenda/';
         await page.goto(url)
@@ -114,28 +149,30 @@ module.exports = {
         })
         */
 
-        //MOSTRA VALORES
+        //MOSTRA A NOTA DAS DISCIPLINAS
         for (var i = 0; i < disciplinas.length; i++) {
             console.log(disciplinas[i] + ' -- Nota1: ' + nota1[i] + ' Nota2: ' + nota2[i] + ' Nota3: ' + nota3[i])
         }
 
-        //JUNTA A NODA DE CADA BIMISTRE COM CADA DISCIPLINA
+        //JUNTA A NOTA DE CADA BIMISTRE COM CADA DISCIPLINA
         const scoreTable = {};
         for (i in disciplinas) {
-          scoreTable[i] = {
-            disciplina: disciplinas[i],
-            nota1: nota1[i],
-            nota2: nota2[i],
-            nota3: nota3[i]
-        
-          }
+            scoreTable[i] = {
+                disciplina: disciplinas[i],
+                nota1: nota1[i],
+                nota2: nota2[i],
+                nota3: nota3[i]
+
+            }
         }
 
-        await browser.close();
+        //FECHA O NAVEGADOR PARA ENCERRAR A SESSÃO ABERTA E INICIA NOVAMENTE PARA LOGAR COM OUTRO USUÁRIO
+        closeBrowser();
+        startBroser();
 
         res.json({
             'aluno(a)': studentName.trim(),
-            matricula:matriculaAluno,
+            matricula: matriculaAluno,
             scoreTable
         })
     }
